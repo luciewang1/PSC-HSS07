@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 This module contains function that will be used for data analysis
-
 @author: Florent Meyniel
 """
 import numpy as np
@@ -37,7 +36,7 @@ def import_one_subject(rootdir, file_name):
     multi_press = multi_press[ignore == 0]
 
     RT = agg.get_variable_data("RT").flatten()
-    RT = np.array([int(rt) if rt != 'None' else -1 for rt in RT])
+    RT = np.array([int(rt) if rt != 'None' else -1 for rt in RT]).astype('int64')
     RT = RT[ignore == 0]
 
     Correct = agg.get_variable_data("Correct").flatten()
@@ -60,15 +59,18 @@ def import_one_subject(rootdir, file_name):
     motor = agg.get_variable_data("Motricity").flatten()
     motor = motor[ignore == 0]
 
-    ecc = agg.get_variable_data("Eccentricity").flatten()
+    ecc = agg.get_variable_data("Eccentricity").flatten().astype('int64')
     ecc = ecc[ignore == 0]
 
     delay = agg.get_variable_data("Delay").flatten()
     delay = delay[ignore == 0]
 
+    rep = agg.get_variable_data("Repetition").flatten()
+    rep = rep[ignore == 0]
+
     return {"trial": trial, "multi_press": multi_press, "RT": RT, "Correct": Correct,
             "onset": onset, "block": block, "seq": seq, "serie": serie, "motor": motor, "ecc": ecc,
-            "delay": delay}
+            "delay": delay, "rep" : rep}
 
 
 def get_serie_data(dat, varname, num_block, num_serie=None):
@@ -76,6 +78,7 @@ def get_serie_data(dat, varname, num_block, num_serie=None):
 
     if num_serie is None:
         ind = dat['block'] == num_block
+
     else:
         ind = (dat['block'] == num_block) & (dat['serie'] == num_serie)
     return dat[varname][ind]
