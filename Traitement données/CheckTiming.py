@@ -16,8 +16,10 @@ import matplotlib.pyplot as plt
 # rootdir = "../data"
 # file_name = "florentm_01_20200112_speed.xpd"
 # file_name = "florentm_02_20200112_lateralization.xpd"
-rootdir = "../data/MSE15012020"
-file_name = "firstexample_07_202001151523.xpd"
+#rootdir = "../data/MSE15012020"
+#file_name = "firstexample_07_202001151523.xpd"
+rootdir = "../Données/Session 1"
+file_name = "firstexample_01_202001221414.xpd"
 
 dat = import_one_subject(rootdir, file_name)
 

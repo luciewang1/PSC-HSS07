@@ -3,7 +3,7 @@
 """
 Script to quickly analyze the reaction time depending on past stimuli.
     - import data
-    - compute the average RT depending on preceding sequences.
+    - compute the median RT depending on preceding sequences.
     - plot the corresponding graph.
 @author: Lucie Wang
 """
@@ -12,10 +12,6 @@ import os
 from utils import import_one_subject, get_serie_data
 import numpy as np
 import matplotlib.pyplot as plt
-
-## Set parameters
-
-is_RT = True # analyse du RT ou de l'erreur
 
 ## Import all data
 
@@ -61,23 +57,23 @@ def int_of_str(s):
         return 1
     return 0
 
-## Compute average RT depending on sequence
+## Compute median RT depending on sequence
 
 def init(k, exp_type=None): # k : history order, exp_type = 0 (motricity) or 1 (timing)
     N = 2**k
-    if exp_type == None: # RT[n] : [sum of RTs, number of occurrences] for a given sequence
+    if exp_type == None: # RT[n] : list of RTs, for a given history sequence
         RT = [None]*N
         for n in range(N):
-            RT[n] = [0,0]
+            RT[n] = []
         return RT
-    else: # RT[ecc][param][n] : [sum of RTs, number of occurrences] for a given sequence and imposed block parameters
+    else: # RT[ecc][param][n] : list of RTs, for given block parameters and a given history sequence
         RT = [None]*3
         for ecc in range(3):
             RT[ecc] = [None]*2
             for param in range(2):
                 RT[ecc][param] = [None] * N
                 for n in range(N):
-                    RT[ecc][param][n] = [0,0]
+                    RT[ecc][param][n] = []
         return RT
 
 def add_subject(dat, RT, k, exp_type=None):
@@ -92,16 +88,14 @@ def add_subject(dat, RT, k, exp_type=None):
             serie_RT = get_serie_data(dat, 'RT', block_num, serie_id)
             for trial in range(k, len(serie_RT)):
                 n = int_of_seq(list(map(int_of_str, serie_rep[trial - k + 1:trial + 1])))
-                if serie_RT[trial] and serie_RT[trial] > 0: # cases excluded : RT = None and RT < 0
+                if serie_RT[trial] and serie_RT[trial] > 0: # cases excluded : RT = None
                     if exp_type == None:
-                        RT[n][0] += float(serie_RT[trial])
-                        RT[n][1] += 1
+                        RT[n].append(serie_RT[trial])
                     else:
-                        RT[ecc][param][n][0] += float(serie_RT[trial])
-                        RT[ecc][param][n][1] += 1
+                        RT[ecc][param][n].append(serie_RT[trial])
     return RT
 
-def build_RT(k, exp_type=None): # RT[n] : average reaction time for a given sequence
+def build_RT(k, exp_type=None): # RT[n] : median reaction time for a given sequence
     N = 2**k
     RT = init(k, exp_type)
     if exp_type == None:
@@ -110,7 +104,7 @@ def build_RT(k, exp_type=None): # RT[n] : average reaction time for a given sequ
                 if is_active[session][subj]:
                     RT = add_subject(data[session][subj], RT, k)
         for n in range(N):
-            RT[n] = RT[n][0]/RT[n][1] if RT[n][1] else 0
+            RT[n] = np.median(RT[n])
     else:
         for session in range(3):
             for subj in range(20):
@@ -119,10 +113,10 @@ def build_RT(k, exp_type=None): # RT[n] : average reaction time for a given sequ
         for ecc in range(3):
             for param in range(2):
                 for n in range(N):
-                    RT[ecc][param][n] = RT[ecc][param][n][0]/RT[ecc][param][n][1] if RT[ecc][param][n][1] else 0
+                    RT[ecc][param][n] = np.median(RT[ecc][param][n]) if RT[ecc][param][n] else 0
     return RT
 
-## Plot average RT depending on sequence
+## Plot median RT depending on sequence
 
 def plot_RT(k, exp_type=None):
     N = 2**k
@@ -139,4 +133,4 @@ def plot_RT(k, exp_type=None):
     plt.title("Reaction time depending on " + str(k) + " last stimuli" + (", in " + ("timing" if exp_type else "motricity") + " experiment" if exp_type != None else ""))
     plt.legend()
     plt.show()
-plot_RT(4, exp_type=1)
+plot_RT(4, exp_type=None)
