@@ -47,26 +47,25 @@ def import_one_subject(rootdir, file_name):
     onset = onset[ignore == 0]
 
     block = agg.get_variable_data("BlockId").flatten()
-    block = np.array(list(map(int, block)))[ignore == 0]
+    block = block[ignore == 0]
 
     seq = agg.get_variable_data("Stimulus").flatten()
     seq = np.array([1 if stim == 'True' else 0 for stim in seq])
     seq = seq[ignore == 0]
 
     serie = agg.get_variable_data("SerieId").flatten()
-    serie = np.array(list(map(int, serie)))[ignore == 0]
+    serie = serie[ignore == 0]
 
     motor = agg.get_variable_data("Motricity").flatten()
-    motor = np.array(list(map(int, motor)))[ignore == 0]
+    motor = motor[ignore == 0]
 
     ecc = agg.get_variable_data("Eccentricity").flatten().astype('int64')
-    ecc = np.array(list(map(int, ecc)))[ignore == 0]
+    ecc = ecc[ignore == 0]
 
     delay = agg.get_variable_data("Delay").flatten()
-    delay = np.array(list(map(int, delay)))[ignore == 0]
+    delay = delay[ignore == 0]
 
     rep = agg.get_variable_data("Repetition").flatten()
-    rep = np.array([1 if r == 'True' else 0 for r in rep])
     rep = rep[ignore == 0]
 
     return {"trial": trial, "multi_press": multi_press, "RT": RT, "Correct": Correct,
@@ -83,3 +82,10 @@ def get_serie_data(dat, varname, num_block, num_serie=None):
     else:
         ind = (dat['block'] == num_block) & (dat['serie'] == num_serie)
     return dat[varname][ind]
+
+def sujetAdmissible(dat):
+    nbCorrect = 0
+    for x in dat["Correct"]:
+        if x:
+            nbCorrect += 1
+    return nbCorrect/len(dat["Correct"]) > 0.9
