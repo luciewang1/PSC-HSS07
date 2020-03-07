@@ -1,1 +1,0 @@
-C:\Progs\Python36\python.exe firstexample.py >log.txt 2>&1
