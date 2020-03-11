@@ -23,7 +23,7 @@ for session in range(3):
     data[session] = [None]*20
     is_active[session] = [False]*20
 
-    rootdir = "../Données/Session " + str(session+1)
+    rootdir = "../Data/Session " + str(session+1)
 
     for file in os.listdir(rootdir):
         if file.endswith(".xpd"):

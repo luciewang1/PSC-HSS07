@@ -28,7 +28,7 @@ def import_good_enough_np(maxi = 0, exp_type = None):
         data[session] = [None] * 20
         is_active[session] = [False] * 20
 
-        rootdir = "../Données/Session " + str(session + 1)
+        rootdir = "../Data/Session " + str(session + 1)
 
         for file in os.listdir(rootdir):
             if file.endswith(".xpd"):
@@ -66,7 +66,7 @@ def import_good_enough_pd(maxi = 100, exp_type = None, dev = False):
     """
     l = []
     if dev:
-        dat = [import_one_subject("../Données/Session 1", "firstexample_01_202001221414.xpd")]
+        dat = [import_one_subject("../Data/Session 1", "firstexample_01_202001221414.xpd")]
     else:
         dat = import_good_enough_np(maxi, exp_type)
     N = len(dat) # number of subjects
