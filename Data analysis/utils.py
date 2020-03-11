@@ -89,4 +89,4 @@ def sujetAdmissible(dat):
     for x in dat["Correct"]:
         if x:
             nbCorrect += 1
-    return nbCorrect/len(dat["Correct"]) > 0.9
+    return nbCorrect/len(dat["Correct"]) > 0.8
