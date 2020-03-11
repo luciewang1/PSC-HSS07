@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 ## Import all data
 
 data = [None]*3 # data[session][subject] : data for given subject of a given session
-
+test = True
 is_active = [None]*3 # is_active[session][subject] : boolean whether a given subject of a given session counts in our data
 
 for session in range(3):
