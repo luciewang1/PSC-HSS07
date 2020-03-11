@@ -17,13 +17,12 @@ import matplotlib.pyplot as plt
 
 ## Set parameters
 
-k = 4
+k = 4 # order of history
 exp_type = 1
-maxi = 25
 
 ## Import all data
 
-df = import_good_enough_pd(maxi, exp_type, dev = False)
+df = import_good_enough_pd(exp_type, dev = False)
 N = df.shape[0] # number of rows
 
 
@@ -59,6 +58,8 @@ df["HistoryId"] = historyId
 
 
 ## Plot histogram
+
+plt.figtext(0.5,0, "Statistique sur un total de 49 sujets (18 expérience 1 + 38 expérience 2)", verticalalignment='bottom', horizontalalignment='center')
 
 for ecc in np.sort(df["ecc"].unique()):
     for mot in np.sort(df["motor"].unique()):
