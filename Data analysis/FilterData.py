@@ -4,6 +4,7 @@
 Two functions to import data above a performance threshold:
     - one for numpy
     - one for pandas (more handy).
+One function to generate caption for graphs.
 
 @author: Lucie Wang
 """
@@ -12,8 +13,9 @@ import os
 from utils import import_one_subject, get_serie_data
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 
-def import_good_enough_np(maxi = 0, exp_type = None):
+def import_good_enough_np(maxi = 15, exp_type = None):
     """
     Import data from subjects above a performance threshold.
     Input: maximal error rate accepted (in %), experiment type (1 for timing, 0 for motricity)
@@ -58,7 +60,7 @@ def import_good_enough_np(maxi = 0, exp_type = None):
 #dat = import_good_enough(30, 1)
 #print(len(dat))
 
-def import_good_enough_pd(maxi = 100, exp_type = None, dev = False):
+def import_good_enough_pd(maxi = 15, exp_type = None, dev = False):
     """
     Import data from subjects above a performance threshold.
     Input: maximal error rate accepted (in %), experiment type (1 for timing, 0 for motricity), developer mode
@@ -66,11 +68,25 @@ def import_good_enough_pd(maxi = 100, exp_type = None, dev = False):
     """
     l = []
     if dev:
-        dat = [import_one_subject("../Data/Session 1", "firstexample_01_202001221414.xpd")]
+        dat = [import_one_subject("../Data/Session 1", "firstexample_01_202001221414.xpd"), import_one_subject("../Data/Session 1", "firstexample_02_202001221414.xpd")]
     else:
         dat = import_good_enough_np(maxi, exp_type)
     N = len(dat) # number of subjects
     for subj in range(N):
         l.append(pd.DataFrame.from_dict(dat[subj]))
     return pd.concat(l, keys = [subj for subj in range(N)], names = ["subj"])
+
+
+dat = import_good_enough_pd(25, dev = True)
+print(len(dat.index.levels[0]))
+print(len(dat.index.unique(0)))
+
+def info_data(maxi = 15, exp_type = None):
+    """
+    Add caption in a pyplot graph, contains info about the data used.
+    Input: maximal error rate accepted (in %), experiment type (1 for timing, 0 for motricity).
+    """
+    dat = import_good_enough_pd(maxi, exp_type)
+    effectif = len(dat.index.unique(0))
+    plt.figtext(0.5,0, "Statistique sur un total de {} sujets".format(effectif) + "\n" + ("Expérience 1 (timing)" if exp_type==1 else ("Expérience 2 (motricité)" if exp_type==0 else "Expériences 1 et 2")), verticalalignment='bottom', horizontalalignment='center')
 
