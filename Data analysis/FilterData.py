@@ -73,4 +73,4 @@ def import_good_enough_pd(maxi = 100, exp_type = None, dev = False):
     for subj in range(N):
         l.append(pd.DataFrame.from_dict(dat[subj]))
     return pd.concat(l, keys = [subj for subj in range(N)], names = ["subj"])
-df = import_good_enough_pd(25, dev = True)
+
