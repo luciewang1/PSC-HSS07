@@ -10,20 +10,18 @@ Script to quickly analyze the reaction time depending on past stimuli.
 
 import os
 from utils import import_one_subject, get_serie_data
-from FilterData import import_good_enough_pd
+from FilterData import import_good_enough_pd, info_data
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 ## Set parameters
 
 k = 4 # order of history
-exp_type = 1
-
-## Import all data
-
-df = import_good_enough_pd(exp_type, dev = False)
-N = df.shape[0] # number of rows
+maxi = 15
+exp_type = 0 # 1 for delay, 0 for motricity
+factors = ['ecc', 'motor'] # list of factors to be distinguished (among 'ecc', 'motor', 'delay')
 
 
 ## Conversion functions
@@ -48,35 +46,49 @@ def str_of_seq(seq): # write sequence as a string of A's and R's
     return ''.join(list(map(lambda x: 'R' if x else 'A', seq)))
 
 
-## Add column for history
+## Import all data
 
-historyId = [None for ind in range(N)]
+df = import_good_enough_pd(maxi, exp_type)
+N = df.shape[0] # number of rows
+
+
+## Operate on dataframe
+
+historyId = [None for ind in range(N)] # add history column
 for ind in range(N):
     if df.iloc[ind]["trial"] >= k:
         historyId[ind] = int_of_seq([df.iloc[ind-k+i+1]["rep"] for i in range(k)])
 df["HistoryId"] = historyId
 
+print(df)
+correct_df = df[df['Correct'] == True]
+print(correct_df)
+partial_df = correct_df[factors + ['HistoryId', 'RT']]
+print(partial_df)
+perf_df = partial_df.groupby(factors + ['HistoryId']).median()
+print(perf_df)
+exploitable_df = perf_df.reset_index(level='HistoryId')
+print(exploitable_df)
 
-## Plot histogram
+## Plot graphs
 
-plt.figtext(0.5,0, "Statistique sur un total de 49 sujets (18 expérience 1 + 38 expérience 2)", verticalalignment='bottom', horizontalalignment='center')
+conditions = {}
 
-for ecc in np.sort(df["ecc"].unique()):
-    for mot in np.sort(df["motor"].unique()):
-        for delay in np.sort(df["delay"].unique()):
+for i in exploitable_df.index.unique(): # different graphs
+    print(i)
+    conditions[i] = {'x' : [], 'RT' : []}
+for i, row in exploitable_df.iterrows(): # data for each graph
+    conditions[i]['x'].append(row['HistoryId'])
+    conditions[i]['RT'].append(row['RT'])
 
-            mask = (df["ecc"] == ecc) & (df["motor"] == mot) & (df["delay"] == delay) & df["Correct"]
-            x = np.sort(df[mask]["HistoryId"].unique())
-            y = []
-            for histId in x:
-                mask_hist = df["HistoryId"] == histId
-                RT = df[mask & mask_hist]["RT"].median()
-                y.append(RT)
+for i in conditions:
+    plt.plot(conditions[i]['x'], conditions[i]['RT'], "o-", label = "{} : {}".format(str(exploitable_df.index.names), str(i)))
 
-            plt.plot(x, y, "o-", label = "ecc : %s, mot : %s, delay : %s" % (ecc, mot, delay))
-
-plt.xticks(x, [str_of_seq(seq_of_int(i, k)) for i in range(N)], rotation=60, fontsize='small')
+plt.xticks([n for n in range(16)], [str_of_seq(seq_of_int(n, k)) for n in range(N)], rotation=60, fontsize='small')
 plt.ylabel("Reaction time (ms)")
 plt.title("Reaction time depending on %s last stimuli" % (str(k)))
 plt.legend()
+
+info_data(maxi, exp_type)
+
 plt.show()
