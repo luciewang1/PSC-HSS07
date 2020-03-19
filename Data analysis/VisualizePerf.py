@@ -60,7 +60,6 @@ for session in sessions[exp_type]:
 
 fig = plt.figure()
 info_data()
-#plt.figtext(0.5,0, "Statistique sur un total de 56 sujets (18 expérience 1 + 38 expérience 2)", verticalalignment='bottom', horizontalalignment='center')
 
 ax1 = fig.add_subplot(211)
 ax1.hist(agg_RT, bins=10, rwidth=.95)
