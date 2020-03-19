@@ -3,8 +3,8 @@
 """
 Script to quickly analyze the reaction time depending on past stimuli.
     - import data
-    - compute the median RT depending on preceding sequences.
-    - plot the corresponding graph.
+    - compute the median RT / error rate depending on preceding sequences.
+    - plot the corresponding graphs.
 @author: Lucie Wang
 """
 
@@ -20,9 +20,9 @@ import matplotlib.pyplot as plt
 
 k = 4 # order of history
 maxi = 15
-exp_type = 0 # 1 for delay, 0 for motricity
-factors = ['ecc', 'motor'] # list of factors to be distinguished (among 'ecc', 'motor', 'delay')
-
+exp_type = None # 1 for delay, 0 for motricity, None for both
+factors = ['ecc', 'motor', 'delay'] # list of factors to be distinguished (among 'ecc', 'motor', 'delay')
+is_RT = False # True for RT, False for error rates
 
 ## Conversion functions
 
@@ -60,33 +60,39 @@ for ind in range(N):
         historyId[ind] = int_of_seq([df.iloc[ind-k+i+1]["rep"] for i in range(k)])
 df["HistoryId"] = historyId
 
-print(df)
-correct_df = df[df['Correct'] == True]
-print(correct_df)
-partial_df = correct_df[factors + ['HistoryId', 'RT']]
-print(partial_df)
-perf_df = partial_df.groupby(factors + ['HistoryId']).median()
-print(perf_df)
-exploitable_df = perf_df.reset_index(level='HistoryId')
-print(exploitable_df)
+if is_RT:
+    correct_df = df[df['Correct'] == True]
+    partial_df = correct_df[factors + ['HistoryId', 'RT']]
+    perf_df = partial_df.groupby(factors + ['HistoryId']).median()
+    exploitable_df = perf_df.reset_index(level='HistoryId')
+else:
+    partial_df = df[factors + ['HistoryId', 'Correct']]
+    print(partial_df)
+    perf_df = partial_df.groupby(factors + ['HistoryId']).mean()
+    print(perf_df)
+    perf_df['Correct'] = perf_df['Correct'].map(lambda x: 100*(1-x)) # conversion to error rate (in %)
+    print(perf_df)
+    exploitable_df = perf_df.reset_index(level='HistoryId')
+    print(exploitable_df)
 
 ## Plot graphs
 
 conditions = {}
+var = 'RT' if is_RT else 'Correct'
 
 for i in exploitable_df.index.unique(): # different graphs
     print(i)
-    conditions[i] = {'x' : [], 'RT' : []}
+    conditions[i] = {'x' : [], 'y' : []}
 for i, row in exploitable_df.iterrows(): # data for each graph
     conditions[i]['x'].append(row['HistoryId'])
-    conditions[i]['RT'].append(row['RT'])
+    conditions[i]['y'].append(row[var])
 
 for i in conditions:
-    plt.plot(conditions[i]['x'], conditions[i]['RT'], "o-", label = "{} : {}".format(str(exploitable_df.index.names), str(i)))
+    plt.plot(conditions[i]['x'], conditions[i]['y'], "o-", label = "{} : {}".format(str(exploitable_df.index.names), str(i)))
 
 plt.xticks([n for n in range(16)], [str_of_seq(seq_of_int(n, k)) for n in range(N)], rotation=60, fontsize='small')
-plt.ylabel("Reaction time (ms)")
-plt.title("Reaction time depending on %s last stimuli" % (str(k)))
+plt.ylabel("Reaction time (ms)" if is_RT else "Error rate (%)")
+plt.title("{} depending on {} last stimuli".format("Reaction time" if is_RT else "Error rate", k))
 plt.legend()
 
 info_data(maxi, exp_type)
