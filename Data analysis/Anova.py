@@ -14,7 +14,7 @@ from FilterData import import_good_enough_pd, info_data
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import scipy.stats as stats
+#import scipy.stats as stats
 #import researchpy as rp
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
@@ -31,4 +31,5 @@ correct_df = df[df['Correct'] == True]
 
 ## Analyze variance
 
-print(stats.f_oneway(correct_df['RT'][correct_df['ecc'] == 0], correct_df['RT'][correct_df['ecc'] == 1], correct_df['RT'][correct_df['ecc'] == 2]))
+results = ols('RT ~ C(ecc) + C(motor) + C(delay)', data = correct_df).fit() # OLS : ordinary least squares
+print(results.summary())
