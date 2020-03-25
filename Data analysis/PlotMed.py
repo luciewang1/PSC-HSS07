@@ -16,17 +16,21 @@ data = fd.import_good_enough_np(maxi=20)
 ecc = np.array([0, 3, 7])
 stack10 = md.MedianeEccTousSujets(1, 0, data)
 stack00 = md.MedianeEccTousSujets(0, 0, data)
+stack0010 = np.concatenate((stack00, stack10), axis=0)
 stack11 = md.MedianeEccTousSujets(1, 1, data)
 fig, (mot,tim) = plt.subplots(1,2, sharey= True)
 # Affichage courbes moyennes - motricité
 
 mot.errorbar(ecc, md.meanSD(stack10)[0], yerr = md.meanSD(stack10)[1], label="Motricité 1 - Delay 0")
 mot.errorbar(ecc + 0.06, md.meanSD(stack00)[0], yerr = md.meanSD(stack00)[1], label="Motricité 0 - Delay 0")
+mot.errorbar(ecc, md.meanSD(stack0010)[0], yerr = md.meanSD(stack0010)[1], label = "Moyenne", linestyle = '--')
 # Légendes et titres
 mot.set_title("Expérience de type Motricité")
 mot.set_xticks((0,3,7))
 mot.grid(True)
 mot.text(4,-20, "1-0 : " + str(len(stack10)) + " sujets \n0-0 : "+str(len(stack00)) + " sujets", fontsize = 8)
+mot.set_ylabel("RT(Répétition) - RT(Alternance) en ms")
+mot.set_xlabel("Excentricité en °")
 mot.legend()
 
 # Affichage courbes moyennes - Delay
@@ -35,6 +39,8 @@ tim.errorbar(ecc + 0.06, md.meanSD(stack11)[0], yerr = md.meanSD(stack11)[1], la
 # Légendes et titres
 tim.set_title("Expérience de type Delay")
 tim.set_xticks((0,3,7))
+tim.set_ylabel("RT(Répétition) - RT(Alternance) en ms")
+tim.set_xlabel("Excentricité en °")
 tim.text(4,-20, "1-0 : " + str(len(stack10)) + " sujets \n1-1 : "+str(len(stack11)) + " sujets", fontsize = 8)
 tim.grid(True)
 tim.legend()

@@ -24,7 +24,7 @@ for ax in dic:
         ax.plot(ecc, subject)
     ax.set_title(dic[ax][1])
     if ax == ax00 :
-        ax.set_ylabel("RT(Alternance) - RT(Répétition)")
+        ax.set_ylabel("RT(Répétition) - RT(Alternance) en ms")
     ax.set_xlabel("Excentricité")
     ax.set_xticks((0,3,7))
     legend = str(len(stack)) + " sujets \ntaux d'erreur < " + str(taux) + "%"
