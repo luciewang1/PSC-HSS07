@@ -57,9 +57,6 @@ def import_good_enough_np(maxi = 15, exp_type = None):
 
     return filtered_data
 
-#dat = import_good_enough(30, 1)
-#print(len(dat))
-
 def import_good_enough_pd(maxi = 15, exp_type = None, dev = False):
     """
     Import data from subjects above a performance threshold.
@@ -76,10 +73,6 @@ def import_good_enough_pd(maxi = 15, exp_type = None, dev = False):
         l.append(pd.DataFrame.from_dict(dat[subj]))
     return pd.concat(l, keys = [subj for subj in range(N)], names = ["subj"])
 
-
-dat = import_good_enough_pd(25, dev = True)
-print(len(dat.index.levels[0]))
-print(len(dat.index.unique(0)))
 
 def info_data(maxi = 15, exp_type = None):
     """
