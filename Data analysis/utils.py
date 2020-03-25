@@ -84,9 +84,4 @@ def get_serie_data(dat, varname, num_block, num_serie=None):
         ind = (dat['block'] == num_block) & (dat['serie'] == num_serie)
     return dat[varname][ind]
 
-def sujetAdmissible(dat):
-    nbCorrect = 0
-    for x in dat["Correct"]:
-        if x:
-            nbCorrect += 1
-    return nbCorrect/len(dat["Correct"]) > 0.9
+

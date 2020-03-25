@@ -73,6 +73,7 @@ def import_good_enough_pd(maxi = 15, exp_type = None, dev = False):
         l.append(pd.DataFrame.from_dict(dat[subj]))
     return pd.concat(l, keys = [subj for subj in range(N)], names = ["subj"])
 
+
 def info_data(maxi = 15, exp_type = None):
     """
     Add caption in a pyplot graph, contains info about the data used.
@@ -81,3 +82,4 @@ def info_data(maxi = 15, exp_type = None):
     dat = import_good_enough_pd(maxi, exp_type)
     effectif = len(dat.index.unique(0))
     plt.figtext(0.5,0, "Statistique sur un total de {} sujets".format(effectif) + "\n" + ("Expérience 1 (timing)" if exp_type==1 else ("Expérience 2 (motricité)" if exp_type==0 else "Expériences 1 et 2")), verticalalignment='bottom', horizontalalignment='center')
+
