@@ -22,7 +22,7 @@ def import_good_enough_np(maxi = 15, exp_type = None):
     Output: list (by subject) of dictionaries (by attribute) of lists (by trial).
     """
     ## Import all data
-    data = [None] * 3  # data[session][subject] : data for given subject of a given session
+    data = [None] * 3  # data[session][subject] : data for given subject of a given session (unfiltered)
 
     is_active = [None] * 3  # is_active[session][subject] : boolean whether a given subject of a given session counts in our data
 
@@ -52,7 +52,7 @@ def import_good_enough_np(maxi = 15, exp_type = None):
     for session in sessions[exp_type]:
         for subj in range(20):
             if is_active[session][subj]:
-                if err[session][subj] < maxi/100:
+                if err[session][subj] <= maxi/100:
                     filtered_data.append(data[session][subj])
 
     return filtered_data
