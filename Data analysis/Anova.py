@@ -5,7 +5,6 @@ Conduct analysis of variance (ANOVA).
     - import data
     - compute the median RT / error rate depending on preceding sequences.
     - plot the corresponding graphs.
-@author: Lucie Wang
 """
 
 import os
