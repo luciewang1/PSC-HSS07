@@ -6,11 +6,12 @@ This module contains function that will be used for data analysis
 """
 import numpy as np
 from expyriment.misc import data_preprocessing
+from ComputeSurprise import add_surprise
 
 
-def import_one_subject(rootdir, file_name):
+def import_one_subject(rootdir, file_name, with_surprise = False):
     """
-    Import the data of one subject, and do some basic preprocessing
+    Import the data of one subject, and do some basic preprocessing.
     """
 
     # Load data file
@@ -69,10 +70,15 @@ def import_one_subject(rootdir, file_name):
     rep = np.array([1 if r == 'True' else 0 for r in rep])
     rep = rep[ignore == 0]
 
-    return {"trial": trial, "multi_press": multi_press, "RT": RT, "Correct": Correct,
+    dat = {"trial": trial, "multi_press": multi_press, "RT": RT, "Correct": Correct,
             "onset": onset, "block": block, "seq": seq, "serie": serie, "motor": motor, "ecc": ecc,
             "delay": delay, "rep" : rep}
 
+    if with_surprise:
+        return add_surprise(dat)
+
+    return dat
+#print(import_one_subject("../Data/Session 1", "firstexample_01_202001221414.xpd", with_surprise=True))
 
 def get_serie_data(dat, varname, num_block, num_serie=None):
     """Get the variable *varname* from dat, for the specified block (and optionnaly, serie)"""
@@ -83,10 +89,3 @@ def get_serie_data(dat, varname, num_block, num_serie=None):
     else:
         ind = (dat['block'] == num_block) & (dat['serie'] == num_serie)
     return dat[varname][ind]
-
-def sujetAdmissible(dat):
-    nbCorrect = 0
-    for x in dat["Correct"]:
-        if x:
-            nbCorrect += 1
-    return nbCorrect/len(dat["Correct"]) > 0.9
