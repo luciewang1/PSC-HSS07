@@ -20,9 +20,9 @@ import matplotlib.pyplot as plt
 
 k = 4 # order of history
 maxi = 15
-exp_type = None # 1 for delay, 0 for motricity, None for both
+exp_type = 0 # 1 for delay, 0 for motricity, None for both
 factors = ['ecc', 'motor', 'delay'] # list of factors to be distinguished (among 'ecc', 'motor', 'delay')
-is_RT = False # True for RT, False for error rates
+is_RT = True # True for RT, False for error rates
 
 ## Conversion functions
 
