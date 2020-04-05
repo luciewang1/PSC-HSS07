@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Fit models to experimental data, by cross-validation over all subjects.
+Fit models to experimental data, by cross-validation over all subjects (sci-kit learn library).
 """
 
 #import os
@@ -20,28 +20,32 @@ from sklearn.utils import shuffle
 
 # Set parameters
 
-vars = []
-X_vars = ["block", "serie", "trial", "seq"]
+vars = ["center", "rep_center", "rep_later", "surprise"]
+X_vars = ["block", "serie", "trial", "seq", "post-correct"]
 n = 5
 with_X = True
-decay = 16
+decay = 10
 exp_type = None
 
-# Import and clean up data
+# Import and complete data
 
 df = import_good_enough_pd(exp_type=exp_type, with_surprise=True, decay=decay) # whole dataframe
 
+df["post-correct"] = df["Correct"].copy() # column for whether preceding answer was correct (1/0)
+df["post-correct"] = df["post-correct"].shift(1)
+
+df["rep_center"] = df["rep"].mul(df["ecc"] == 0) # column for repetition * 1_{ecc = 0}
+df["rep_later"] = df["rep"].mul(df["ecc"] > 0) # column for repetition * 1_{ecc > 0}
+df["center"] = (df["ecc"] == 0).astype(int) # column for whether ecc = 0
+
+# Clean up and split data
+
 df = df[df['Correct'] == True]  # correct trials only
-df.dropna(subset=['surprise'], inplace=True)  # drop first trials of series
+df.dropna(subset=['surprise', "post-correct"], inplace=True)  # drop first trials of series
 
 dats = []  # list of individual dataframes
 for subj_id in df.index.unique(0):
     dats.append(df.loc[subj_id])
-
-# Complete data
-
-# post-error stimulus
-# RA*1_{ecc > 0}
 
 # Compute cross-validation scores
 
