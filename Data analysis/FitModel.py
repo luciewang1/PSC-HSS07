@@ -1,16 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Fit the Minimal Transitions Probabilities Model to experimental data.
-    - import data with surprise column
-    - conduct linear regression on.
-
-TO DO:
-    - F-statistic?
-    - compute performance of the fit, by cross-validation
-    - compare surprise-only model + model with repetition, based on cross-validation criterion
-    - distinguish on eccentricity
-    - extra: analyze inter-subject variance? extract numbers of interest from results, see how they vary from one subject to another
+Fit models to experimental data, by cross-validation over all subjects.
 """
 
 #import os
@@ -25,10 +16,11 @@ import pandas as pd
 #from statsmodels.formula.api import ols
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LinearRegression
+from sklearn.utils import shuffle
 
 # Set parameters
 
-vars = ["surprise"]
+vars = ["rep"]
 X_vars = ["block", "serie", "trial", "seq"]
 n = 5
 with_X = True
@@ -46,7 +38,12 @@ dats = []  # list of individual dataframes
 for subj_id in df.index.unique(0):
     dats.append(df.loc[subj_id])
 
-# Compute cross validation score
+# Complete data
+
+# post-error stimulus
+# RA*1_{ecc > 0}
+
+# Compute cross-validation scores
 
 def cross_val(vars, n=5, with_X=True):
     """
@@ -61,6 +58,8 @@ def cross_val(vars, n=5, with_X=True):
     if with_X:
         vars += X_vars
     for dat in dats:
+        dat = shuffle(dat).reset_index() # add-on for random shuffling on trials
+
         X = np.column_stack([dat[var].values for var in vars])
         y = dat["RT"].values
         indiv_scores = cross_val_score(LinearRegression(), X, y, cv=n, scoring='r2')
