@@ -19,13 +19,12 @@ def add_surprise(dat, decay=16, order=1):
 
     options = {'Decay': decay}
     seq = dat["seq"]
-    prob = [] # list for probabilities
+    surprise = [] # list for theoretical surprises
     for seriesId in range(12):
         seqSeries = seq[seriesId*120:(seriesId+1)*120]
         seqSeries = sg.ConvertSequence(seqSeries)['seq']  # seq : stimuli sequence (1/0 for square/disk)
 
         out_fixed = IO.IdealObserver(seqSeries, 'fixed', order=order, options=options)
-        prob += list(out_fixed['surprise'])
-    surprise = list(map(lambda p: -np.log(p), prob)) # list for theoretical surprises
+        surprise += list(out_fixed['surprise'])
     dat["surprise"] = surprise
     return dat
