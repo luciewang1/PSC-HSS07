@@ -20,7 +20,7 @@ from sklearn.utils import shuffle
 
 # Set parameters
 
-vars = ["rep"]
+vars = []
 X_vars = ["block", "serie", "trial", "seq"]
 n = 5
 with_X = True
@@ -71,4 +71,4 @@ scores = cross_val(vars, n, with_X)
 N_subj = len(scores)//n # number of subjects
 print()
 print("Model: RT ~ " + ("X + " if with_X else "") + " + ".join(vars))
-print("Decay = " + str(decay) + " -> Accuracy (avg r2): %0.2f (+/- %0.2f), with 95%% confidence" % (scores.mean(), scores.std()/np.sqrt(N_subj) * 2))
+print("Decay = " + str(decay) + " -> Accuracy (avg r2): %0.3f (+/- %0.3f), with 95%% confidence" % (scores.mean(), scores.std()/np.sqrt(N_subj) * 2))
