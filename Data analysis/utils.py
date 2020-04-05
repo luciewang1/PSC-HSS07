@@ -9,7 +9,7 @@ from expyriment.misc import data_preprocessing
 from ComputeSurprise import add_surprise
 
 
-def import_one_subject(rootdir, file_name, with_surprise = False):
+def import_one_subject(rootdir, file_name, with_surprise=False, decay=16):
     """
     Import the data of one subject, and do some basic preprocessing.
     """
@@ -75,10 +75,11 @@ def import_one_subject(rootdir, file_name, with_surprise = False):
             "delay": delay, "rep" : rep}
 
     if with_surprise:
-        return add_surprise(dat)
+        return add_surprise(dat, decay)
 
     return dat
-#print(import_one_subject("../Data/Session 1", "firstexample_01_202001221414.xpd", with_surprise=True))
+#dat = import_one_subject("../Data/Session 1", "firstexample_01_202001221414.xpd", with_surprise=True)
+#print(dat)
 
 def get_serie_data(dat, varname, num_block, num_serie=None):
     """Get the variable *varname* from dat, for the specified block (and optionnaly, serie)"""

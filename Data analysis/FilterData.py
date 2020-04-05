@@ -15,10 +15,10 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-def import_good_enough_np(maxi = 15, exp_type = None, with_surprise = False):
+def import_good_enough_np(maxi = 15, exp_type = None, with_surprise = False, decay = 16):
     """
     Import data from subjects above a performance threshold.
-    Input: maximal error rate accepted (in %), experiment type (1 for timing, 0 for motricity), surprise column (True if to be added).
+    Input: maximal error rate accepted (in %), experiment type (1 for timing, 0 for motricity), surprise column (True if to be added), decay parameter then.
     Output: list (by subject) of dictionaries (by attribute) of lists (by trial).
     """
     ## Import all data
@@ -35,7 +35,7 @@ def import_good_enough_np(maxi = 15, exp_type = None, with_surprise = False):
         for file in os.listdir(rootdir):
             if file.endswith(".xpd"):
                 subj = int(file.split("_")[1]) - 1
-                data[session][subj] = import_one_subject(rootdir, file, with_surprise)
+                data[session][subj] = import_one_subject(rootdir, file, with_surprise, decay)
                 is_active[session][subj] = True
 
     ## Get error rates
@@ -57,22 +57,23 @@ def import_good_enough_np(maxi = 15, exp_type = None, with_surprise = False):
 
     return filtered_data
 
-def import_good_enough_pd(maxi = 15, exp_type = None, with_surprise = False, dev = False):
+def import_good_enough_pd(maxi = 15, exp_type = None, with_surprise = False, decay = 16, dev = False):
     """
     Import data from subjects above a performance threshold.
-    Input: maximal error rate accepted (in %), experiment type (1 for timing, 0 for motricity), surprise column (True if to be added), developer mode.
+    Input: maximal error rate accepted (in %), experiment type (1 for timing, 0 for motricity), surprise column (True if to be added), decay parameter then, developer mode.
     Output: Panda dataframe (double-indexed by subject then trial).
     """
     l = []
     if dev:
-        dat = [import_one_subject("../Data/Session 1", "firstexample_01_202001221414.xpd", with_surprise), import_one_subject("../Data/Session 1", "firstexample_02_202001221414.xpd", with_surprise)]
+        dat = [import_one_subject("../Data/Session 1", "firstexample_01_202001221414.xpd", with_surprise, decay), import_one_subject("../Data/Session 1", "firstexample_02_202001221414.xpd", with_surprise, decay)]
     else:
-        dat = import_good_enough_np(maxi, exp_type, with_surprise)
+        dat = import_good_enough_np(maxi, exp_type, with_surprise, decay)
     N = len(dat) # number of subjects
     for subj in range(N):
         l.append(pd.DataFrame.from_dict(dat[subj]))
     return pd.concat(l, keys = [subj for subj in range(N)], names = ["subj"])
-#print(import_good_enough_pd(with_surprise=True, dev=True))
+#df = import_good_enough_pd(with_surprise=True, dev=False)
+#print(df)
 
 def info_data(maxi = 15, exp_type = None):
     """
