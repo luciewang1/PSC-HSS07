@@ -9,7 +9,6 @@ from utils import import_one_subject, get_serie_data
 from FilterData import import_good_enough_pd#, info_data
 import numpy as np
 import pandas as pd
-#import matplotlib.pyplot as plt
 #import scipy.stats as stats
 #import researchpy as rp
 #import statsmodels.api as sm
