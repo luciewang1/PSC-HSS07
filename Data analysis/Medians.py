@@ -3,6 +3,7 @@
 
 
 import numpy as np
+import pandas as pd
 
 
 # calcul des médianes pour chaque excentriccités
@@ -43,7 +44,6 @@ def MedianeEccTousSujets(motor, delay, data_fichier) :
             stack = np.concatenate((stack, np.array([med])), axis=0)
 
     return stack
-
 
 # Calcul des moyennes par colonne
 def meanSD(stack) :
