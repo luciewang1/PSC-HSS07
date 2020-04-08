@@ -77,20 +77,23 @@ else:
 
 ## Plot graphs
 
+N = 2**k # redef N = 2^k
+
 conditions = {}
 var = 'RT' if is_RT else 'Correct'
 
 for i in exploitable_df.index.unique(): # different graphs
-    print(i)
+    #print(i)
     conditions[i] = {'x' : [], 'y' : []}
 for i, row in exploitable_df.iterrows(): # data for each graph
     conditions[i]['x'].append(row['HistoryId'])
     conditions[i]['y'].append(row[var])
 
 for i in conditions:
-    plt.plot(conditions[i]['x'], conditions[i]['y'], "o-", label = "{} : {}".format(str(exploitable_df.index.names), str(i)))
+    #print(conditions[i]['x'])
+    plt.plot(conditions[i]['x'], conditions[i]['y'][::-1], "o-", label = "{} : {}".format(str(exploitable_df.index.names), str(i)))
 
-plt.xticks([n for n in range(16)], [str_of_seq(seq_of_int(n, k)) for n in range(N)], rotation=60, fontsize='small')
+plt.xticks([n for n in range(N)], [str_of_seq(seq_of_int(N-1-n, k)) for n in range(N)], rotation=60, fontsize='small')
 plt.ylabel("Reaction time (ms)" if is_RT else "Error rate (%)")
 plt.title("{} depending on {} last stimuli".format("Reaction time" if is_RT else "Error rate", k))
 plt.legend()
