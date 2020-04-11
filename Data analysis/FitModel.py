@@ -11,12 +11,26 @@ For two given models (say A, B), implement a t-test on their difference of score
 Input: two models defined by their sets of variables (vars_A and vars_B)
 Goal: determine if there is a significant difference between R2_A and R2_B across all subjects
 
-Practical details (from Florent Meyniel):
+Further details (from Florent Meyniel):
 le test pertinent ici est de calculer la significativité de la différence appariée.
 Autrement dit, vous calculez pour chaque sujet la différence de R2 entre les deux modèles, puis tester au niveau du groupe,
 par un t-test, si cette différence est significative
 (il existe aussi des fonctions de t-test appariée dans lesquelles vous données vos deux listes de R2,
 chacune présentant les sujets dans le même ordre, et la fonction calcule toute seule la significativité de la différence appariée).
+
+Parameters details (apart from vars, all parameters should stick to their current value):
+List of our models under study:
+0. []
+1. ["surprise"]
+2. ["rep"]
+3. ["rep_center", "rep_later"]
+4. ["center", "rep_center", "rep_later"]
+5. ["center", "rep_center", "rep_later", "surprise"]
+T-test should be carried out between models:
+- 0 and 1
+- 4 and 5
+- 2 and 3
+- 3 and 4
 """
 
 #import os
@@ -38,7 +52,7 @@ vars = ["center", "rep_center", "rep_later", "surprise"]
 X_vars = ["block", "serie", "trial", "seq", "post-correct"]
 n = 5
 with_X = True
-decay = 10
+decay = 16
 exp_type = None
 
 # Import and complete data
