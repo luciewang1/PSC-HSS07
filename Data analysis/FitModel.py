@@ -38,7 +38,7 @@ from utils import import_one_subject, get_serie_data
 from FilterData import import_good_enough_pd#, info_data
 import numpy as np
 import pandas as pd
-#import scipy.stats as stats
+import scipy.stats as stats
 #import researchpy as rp
 #import statsmodels.api as sm
 #from statsmodels.formula.api import ols
@@ -104,3 +104,23 @@ N_subj = len(scores)//n # number of subjects
 print()
 print("Model: RT ~ " + ("X + " if with_X else "") + " + ".join(vars))
 print("Decay = " + str(decay) + " -> Accuracy (avg R2): %0.3f (+/- %0.3f), with 95%% confidence" % (scores.mean(), scores.std()/np.sqrt(N_subj) * 2))
+
+
+
+def t_test(vars_A,vars_B, n=5, with_X=True):
+    """
+    We suppose that the samples of the models are always related
+    Input:2 different list of regressor variables (strings), number of folds for n-fold cross-validation, base regressors X (True if to be included).
+    Output:(t-statistic,p-value)
+    """
+    return stats.ttest_rel(cross_val(vars_A,n,with_X),cross_val(vars_B,n,with_X))
+
+VARS=[[],["surprise"],["rep"],["rep_center", "rep_later"],["center", "rep_center", "rep_later"]
+                                  ,["center", "rep_center", "rep_later", "surprise"]]
+
+#T-Tests between different models
+for i in range(5):
+    if(i!=1):
+        print()
+        print("t-test between model "+repr(i)+" and model "+ repr(i+1)+" : ")
+        print(t_test(VARS[i],VARS[i+1]))
