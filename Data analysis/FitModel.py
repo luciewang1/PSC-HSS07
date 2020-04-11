@@ -1,7 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Fit models to experimental data, by cross-validation over all subjects (sci-kit learn library).
+DONE SO FAR
+For any given model, evaluate goodness of fit to experimental data, by cross-validation over all subjects (sci-kit learn library).
+Input: model defined by its set of variables vars
+Output: its average R2 score over all subjects
+
+TO DO
+For two given models (say A, B), implement a t-test on their difference of scores (R2_A - R2_B) across all subjects.
+Input: two models defined by their sets of variables (vars_A and vars_B)
+Goal: determine if there is a significant difference between R2_A and R2_B across all subjects
+
+Practical details (from Florent Meyniel):
+le test pertinent ici est de calculer la significativité de la différence appariée.
+Autrement dit, vous calculez pour chaque sujet la différence de R2 entre les deux modèles, puis tester au niveau du groupe,
+par un t-test, si cette différence est significative
+(il existe aussi des fonctions de t-test appariée dans lesquelles vous données vos deux listes de R2,
+chacune présentant les sujets dans le même ordre, et la fonction calcule toute seule la significativité de la différence appariée).
 """
 
 #import os
@@ -50,9 +65,9 @@ for subj_id in df.index.unique(0):
 
 def cross_val(vars, n=5, with_X=True):
     """
-    Cross-validate a linear model over all subjects, by aggregating scores obtained individually.
+    Cross-validate a linear model over all subjects, by aggregating cross-validation scores obtained individually.
     Input: list of regressor variables (strings), number of folds for n-fold cross-validation, base regressors X (True if to be included).
-    Output: array of cross-validation scores.
+    Output: array of R2 scores (one score by subject).
     """
 
     scores = []
@@ -74,4 +89,4 @@ scores = cross_val(vars, n, with_X)
 N_subj = len(scores)//n # number of subjects
 print()
 print("Model: RT ~ " + ("X + " if with_X else "") + " + ".join(vars))
-print("Decay = " + str(decay) + " -> Accuracy (avg r2): %0.3f (+/- %0.3f), with 95%% confidence" % (scores.mean(), scores.std()/np.sqrt(N_subj) * 2))
+print("Decay = " + str(decay) + " -> Accuracy (avg R2): %0.3f (+/- %0.3f), with 95%% confidence" % (scores.mean(), scores.std()/np.sqrt(N_subj) * 2))
